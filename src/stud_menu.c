@@ -29,9 +29,9 @@ void studentMenu(long int studentId) {
     while (1) {
         printf("\n---------------- STUDENT MENU ----------------\n");
         printf("1. View Profile\n");
-        printf("2. Edit Preferences\n");
-        printf("3. View Merit Rank\n");
-        printf("4. View Allocation Status\n");
+        printf("2. View Merit Rank\n");
+        printf("3. View Allocation Status\n");
+        printf("4. Edit Preferences\n");
         printf("5. Change Password\n");
         printf("6. Logout\n");
         printf("----------------------------------------------\n");
@@ -60,35 +60,7 @@ void studentMenu(long int studentId) {
                 break;
             }
 
-            case 2: { // Edit Preferences
-                printf("\n--- EDIT PREFERENCES ---\n");
-                printf("Available Departments: CSE, IT, TT, APM\n\n");
-
-                for (int i = 0; i < PREF_COUNT; i++) {
-                    int valid = 0;
-                    while (!valid) {
-                        printf("Enter Preference %d (current: %s): ", i + 1, a[studentIndex].pref[i]);
-                        scanf("%s", a[studentIndex].pref[i]);
-                        getchar();
-
-                        // Validate department
-                        if (strcmp(a[studentIndex].pref[i], "CSE") == 0 ||
-                            strcmp(a[studentIndex].pref[i], "IT") == 0 ||
-                            strcmp(a[studentIndex].pref[i], "TT") == 0 ||
-                            strcmp(a[studentIndex].pref[i], "APM") == 0) {
-                            valid = 1;
-                        } else {
-                            printError("Invalid! Enter CSE, IT, TT, or APM.");
-                        }
-                    }
-                }
-
-                saveApplicants(a, n);
-                printSuccess("Preferences updated successfully!");
-                break;
-            }
-
-            case 3: { // View Merit Rank
+            case 2: { // View Merit Rank
                 int merit_rank = 1;
                 Applicant a_temp[MAX];
                 int n_temp = loadApplicants(a_temp);
@@ -117,7 +89,7 @@ void studentMenu(long int studentId) {
                 break;
             }
 
-            case 4: { // View Allocation Status
+            case 3: { // View Allocation Status
                 printf("\n========== ALLOCATION STATUS ==========\n");
                 if (a[studentIndex].allocated) {
                     printf("Status: SELECTED\n");
@@ -127,6 +99,38 @@ void studentMenu(long int studentId) {
                     printf("Please wait for merit list generation.\n");
                 }
                 printf("======================================\n");
+                break;
+            }
+
+            case 4: { // Edit Preferences
+                printf("\n--- EDIT PREFERENCES ---\n");
+                printf("Available Departments:\n");
+                printf("1. CSE\n");
+                printf("2. IT\n");
+                printf("3. TT\n");
+                printf("4. APM\n\n");
+
+                const char *depts[] = {"CSE", "IT", "TT", "APM"};
+                for (int i = 0; i < PREF_COUNT; i++) {
+                    int valid = 0;
+                    while (!valid) {
+                        printf("Enter Preference %d (current: %s) [1-4]: ", i + 1, a[studentIndex].pref[i]);
+                        int choice;
+                        scanf("%d", &choice);
+                        getchar();
+
+                        // Validate department choice
+                        if (choice >= 1 && choice <= 4) {
+                            strcpy(a[studentIndex].pref[i], depts[choice - 1]);
+                            valid = 1;
+                        } else {
+                            printError("Invalid! Enter 1 for CSE, 2 for IT, 3 for TT, or 4 for APM.");
+                        }
+                    }
+                }
+
+                saveApplicants(a, n);
+                printSuccess("Preferences updated successfully!");
                 break;
             }
 

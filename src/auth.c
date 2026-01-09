@@ -258,9 +258,21 @@ void studentRegistration() {
         getchar();
     }
 
-    printf("Enter Category (GEN/OBC/SC/ST): ");
-    scanf("%s", newStudent.category);
+    printf("Enter Category:\n");
+    printf("1. GEN\n");
+    printf("2. OBC\n");
+    printf("3. SC\n");
+    printf("4. ST\n");
+    printf("Enter your choice (1-4): ");
+    int catChoice;
+    scanf("%d", &catChoice);
     getchar();
+    const char *categories[] = {"GEN", "OBC", "SC", "ST"};
+    if (catChoice >= 1 && catChoice <= 4) {
+        strcpy(newStudent.category, categories[catChoice - 1]);
+    } else {
+        strcpy(newStudent.category, "GEN");
+    }
 
     printf("Enter JEE Rank: ");
     scanf("%d", &newStudent.jee_rank);
@@ -276,12 +288,19 @@ void studentRegistration() {
     printf("2. IT\n");
     printf("3. TT\n");
     printf("4. APM\n\n");
-    printf("Enter preference order (space-separated, e.g., CSE IT TT APM):\n");
+    printf("Enter preference order (numbers 1-4, one per line):\n");
 
+    const char *depts[] = {"CSE", "IT", "TT", "APM"};
     for (int i = 0; i < PREF_COUNT; i++) {
+        int choice;
         printf("Preference %d: ", i + 1);
-        scanf("%s", newStudent.pref[i]);
+        scanf("%d", &choice);
         getchar();
+        if (choice >= 1 && choice <= 4) {
+            strcpy(newStudent.pref[i], depts[choice - 1]);
+        } else {
+            strcpy(newStudent.pref[i], "CSE");
+        }
     }
 
     strcpy(newStudent.department, "NA");

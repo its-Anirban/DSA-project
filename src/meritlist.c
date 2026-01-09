@@ -8,14 +8,7 @@
 #include "utils.h"
 
 /* ============================================================
-   INTERNAL HELPER
-   ============================================================ */
-static void ensureMeritListGenerated() {
-    generateMeritList();
-}
-
-/* ============================================================
-   GENERATE MERIT LIST (UNCHANGED LOGIC)
+   GENERATE MERIT LIST
    ============================================================ */
 void generateMeritList() {
     Applicant a[MAX];
@@ -71,17 +64,6 @@ void generateMeritList() {
         }
     }
 
-    printf("\n========== MERIT LIST WITH ALLOCATIONS ==========\n");
-    printf("Rank | ID   | Name              | Category | Marks | Dept | Status\n");
-    printf("-------------------------------------------------------------------\n");
-
-    for (int i = 0; i < n; i++) {
-        printf("%4d | %4d | %-17s | %8s | %5d | %4s | %s\n",
-               a[i].jee_rank, a[i].id, a[i].name, a[i].category,
-               a[i].marks, a[i].department,
-               a[i].allocated ? "SELECTED" : "WAITING");
-    }
-
     FILE *fp = fopen("merit_list.csv", "w");
     if (fp) {
         fprintf(fp, "JEE_Rank,ID,Name,Category,Department,Marks,Status\n");
@@ -101,14 +83,14 @@ void generateMeritList() {
    VIEW MERIT LIST
    ============================================================ */
 void viewMeritList() {
-    ensureMeritListGenerated();
+    generateMeritList();
 
     FILE *fp = fopen("merit_list.csv", "r");
     if (!fp) return;
 
     printf("\n========== MERIT LIST ==========\n");
-    printf("Rank | ID   | Name              | Category | Marks | Dept | Status\n");
-    printf("-------------------------------------------------------------------\n");
+    printf("%-6s | %-6s | %-25s | %-10s | %-7s | %-6s | %-10s\n", "Rank", "ID", "Name", "Category", "Marks", "Dept", "Status");
+    printf("---------------------------------------------------------------------------\n");
 
     char line[500];
     fgets(line, sizeof(line), fp);
@@ -119,8 +101,10 @@ void viewMeritList() {
 
         if (sscanf(line, "%d,%d,%49[^,],%9[^,],%9[^,],%d,%19s",
                    &rank, &id, name, category, dept, &marks, status) == 7) {
-            printf("%4d | %4d | %-17s | %8s | %5d | %4s | %s\n",
-                   rank, id, name, category, marks, dept, status);
+            if (strcmp(status, "SELECTED") == 0) {
+                printf("%-6d | %-6d | %-25s | %-10s | %-7d | %-6s | %-10s\n",
+                       rank, id, name, category, marks, dept, status);
+            }
         }
     }
     fclose(fp);
@@ -130,7 +114,7 @@ void viewMeritList() {
    VIEW CATEGORY-WISE MERIT LIST
    ============================================================ */
 void viewCategoryWiseMeritList(int category) {
-    ensureMeritListGenerated();
+    generateMeritList();
 
     Applicant a[MAX];
     int n = loadApplicants(a);
@@ -145,11 +129,13 @@ void viewCategoryWiseMeritList(int category) {
     }
 
     printf("\n========== %s CATEGORY MERIT LIST ==========\n", catCode);
+    printf("%-6s | %-6s | %-25s | %-10s | %-7s | %-6s | %-10s\n", "Rank", "ID", "Name", "Category", "Marks", "Dept", "Status");
+    printf("---------------------------------------------------------------------------\n");
 
     for (int i = 0; i < n; i++) {
-        if (strcmp(a[i].category, catCode) == 0) {
-            printf("%4d | %4d | %-17s | %5d | %4s | %s\n",
-                   a[i].jee_rank, a[i].id, a[i].name, a[i].marks,
+        if (strcmp(a[i].category, catCode) == 0 && a[i].allocated) {
+            printf("%-6d | %-6d | %-25s | %-10s | %-7d | %-6s | %-10s\n",
+                   a[i].jee_rank, a[i].id, a[i].name, a[i].category, a[i].marks,
                    a[i].department,
                    a[i].allocated ? "SELECTED" : "WAITING");
         }
@@ -160,7 +146,7 @@ void viewCategoryWiseMeritList(int category) {
    VIEW DEPARTMENT-WISE MERIT LIST
    ============================================================ */
 void viewDepartmentWiseMeritList(int deptChoice) {
-    ensureMeritListGenerated();
+    generateMeritList();
 
     Applicant a[MAX];
     int n = loadApplicants(a);
@@ -168,11 +154,15 @@ void viewDepartmentWiseMeritList(int deptChoice) {
 
     if (deptChoice < 1 || deptChoice > 4) return;
 
+    printf("\n========== %s DEPARTMENT MERIT LIST ==========\n", depts[deptChoice - 1]);
+    printf("%-6s | %-6s | %-25s | %-10s | %-7s | %-6s | %-10s\n", "Rank", "ID", "Name", "Category", "Marks", "Dept", "Status");
+    printf("---------------------------------------------------------------------------\n");
+
     for (int i = 0; i < n; i++) {
-        if (strcmp(a[i].department, depts[deptChoice - 1]) == 0) {
-            printf("%4d | %4d | %-17s | %8s | %5d\n",
+        if (strcmp(a[i].department, depts[deptChoice - 1]) == 0 && a[i].allocated) {
+            printf("%-6d | %-6d | %-25s | %-10s | %-7d | %-6s | %-10s\n",
                    a[i].jee_rank, a[i].id, a[i].name,
-                   a[i].category, a[i].marks);
+                   a[i].category, a[i].marks, a[i].department, "SELECTED");
         }
     }
 }
@@ -181,15 +171,19 @@ void viewDepartmentWiseMeritList(int deptChoice) {
    VIEW WAITING LIST
    ============================================================ */
 void viewWaitingList() {
-    ensureMeritListGenerated();
+    generateMeritList();
 
     Applicant a[MAX];
     int n = loadApplicants(a);
 
+    printf("\n========== WAITING LIST ==========\n");
+    printf("%-6s | %-6s | %-25s | %-10s | %-7s | %-6s | %-10s\n", "Rank", "ID", "Name", "Category", "Marks", "Dept", "Status");
+    printf("---------------------------------------------------------------------------\n");
+
     for (int i = 0; i < n; i++) {
         if (!a[i].allocated) {
-            printf("%4d | %4d | %-17s | %8s\n",
-                   a[i].jee_rank, a[i].id, a[i].name, a[i].category);
+            printf("%-6d | %-6d | %-25s | %-10s | %-7d | %-6s | %-10s\n",
+                   a[i].jee_rank, a[i].id, a[i].name, a[i].category, a[i].marks, a[i].department, "WAITING");
         }
     }
 }

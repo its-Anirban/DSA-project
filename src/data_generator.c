@@ -55,14 +55,7 @@ void generate_applicant(Applicant *a) {
     const char *first = FIRST_NAMES[rand() % FN_COUNT];
     const char *last  = LAST_NAMES[rand() % LN_COUNT];
 
-    if (rand() % 2) {
-        snprintf(a->name, MAX_NAME_LEN, "%s %s", first, last);
-    } else {
-        snprintf(a->name, MAX_NAME_LEN, "%s %s %s",
-                 first,
-                 FIRST_NAMES[rand() % FN_COUNT],
-                 last);
-    }
+    snprintf(a->name, MAX_NAME_LEN, "%s %s", first, last);
 
     /* Password */
     random_password(a->password, 10);
@@ -76,13 +69,13 @@ void generate_applicant(Applicant *a) {
 
     shuffle(a->pref, PREF_COUNT);
 
-    /* Department from preference */
-    strcpy(a->department, a->pref[rand() % PREF_COUNT]);
+    /* Department - not allocated until merit list is generated */
+    strcpy(a->department, "N/A");
 
     /* Marks, rank, allocated */
     a->marks = rand() % 101;
     a->jee_rank = 1 + rand() % 50000;
-    a->allocated = rand() % 2;
+    a->allocated = 0;
 }
 
 void write_applicant_csv(FILE *fp, const Applicant *a) {

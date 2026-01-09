@@ -30,9 +30,21 @@ void addApplicant() {
     scanf("%s", a[n].password);
     getchar();
 
-    printf("Enter Category (GEN/OBC/SC/ST): ");
-    scanf("%s", a[n].category);
+    printf("Enter Category:\n");
+    printf("1. GEN\n");
+    printf("2. OBC\n");
+    printf("3. SC\n");
+    printf("4. ST\n");
+    printf("Enter your choice (1-4): ");
+    int catChoice;
+    scanf("%d", &catChoice);
     getchar();
+    const char *categories[] = {"GEN", "OBC", "SC", "ST"};
+    if (catChoice >= 1 && catChoice <= 4) {
+        strcpy(a[n].category, categories[catChoice - 1]);
+    } else {
+        strcpy(a[n].category, "GEN");
+    }
 
     printf("Enter JEE Rank: ");
     scanf("%d", &a[n].jee_rank);
@@ -42,11 +54,22 @@ void addApplicant() {
     scanf("%d", &a[n].marks);
     getchar();
 
-    printf("Enter Preferences:\n");
+    printf("Enter Preferences (1-4 for CSE/IT/TT/APM):\n");
+    printf("1. CSE\n");
+    printf("2. IT\n");
+    printf("3. TT\n");
+    printf("4. APM\n");
+    const char *depts[] = {"CSE", "IT", "TT", "APM"};
     for (int i = 0; i < PREF_COUNT; i++) {
-        printf("Preference %d (CSE/IT/TT/APM): ", i + 1);
-        scanf("%s", a[n].pref[i]);
+        int deptChoice;
+        printf("Preference %d [1-4]: ", i + 1);
+        scanf("%d", &deptChoice);
         getchar();
+        if (deptChoice >= 1 && deptChoice <= 4) {
+            strcpy(a[n].pref[i], depts[deptChoice - 1]);
+        } else {
+            strcpy(a[n].pref[i], "CSE");
+        }
     }
 
     strcpy(a[n].department, "NA");
@@ -154,7 +177,7 @@ void searchApplicantByID() {
 
     for (int i = 0; i < n; i++) {
         if (a[i].id == target) {
-            printf("\n--- RECORD FOUND ---\n");
+            printSuccess("--- RECORD FOUND ---");
             printf("ID: %d | Name: %s | Category: %s\n", a[i].id, a[i].name, a[i].category);
             printf("Marks: %d | JEE Rank: %d\n", a[i].marks, a[i].jee_rank);
             printf("Department: %s | Status: %s\n", a[i].department,
@@ -175,11 +198,11 @@ void searchApplicantByName() {
     char key[50];
     int found = 0;
 
-    printf("\nEnter Applicant Name (partial match okay): ");
+    printf("\nEnter Applicant Name: ");
     scanf(" %49[^\n]", key);
     getchar();
 
-    printf("\n--- MATCHING RECORDS ---\n");
+    printSuccess("\n--- MATCHING RECORDS ---\n");
     for (int i = 0; i < n; i++) {
         if (strstr(a[i].name, key) != NULL) {
             printf("ID: %d | Name: %s | Category: %s | Marks: %d | JEE Rank: %d | Dept: %s\n",
