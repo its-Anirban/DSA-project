@@ -1,5 +1,3 @@
-# Makefile for Student Admission System
-
 CC = gcc
 CFLAGS = -Wall -Wextra -I./headers
 SRCDIR = src
@@ -21,23 +19,23 @@ SOURCES = $(SRCDIR)/main.c \
 # Object files
 OBJECTS = $(patsubst $(SRCDIR)/%.c,$(OBJDIR)/%.o,$(SOURCES))
 
-# Executable name
-EXECUTABLE = $(BINDIR)/admission_system
+# Executable name (Added .exe for Windows)
+EXECUTABLE = $(BINDIR)\admission_system.exe
 
 # Default target
 all: $(EXECUTABLE)
 
-# Create directories if they don't exist
+# Create directories using Windows syntax
 $(OBJDIR):
-	@mkdir -p $(OBJDIR)
+	@if not exist $(OBJDIR) mkdir $(OBJDIR)
 
 $(BINDIR):
-	@mkdir -p $(BINDIR)
+	@if not exist $(BINDIR) mkdir $(BINDIR)
 
 # Link the executable
 $(EXECUTABLE): $(OBJDIR) $(BINDIR) $(OBJECTS)
 	$(CC) $(CFLAGS) -o $@ $(OBJECTS)
-	@echo "Build complete! Executable: $@"
+	@echo Build complete! Executable: $(EXECUTABLE)
 
 # Compile source files to object files
 $(OBJDIR)/%.o: $(SRCDIR)/%.c
@@ -45,20 +43,21 @@ $(OBJDIR)/%.o: $(SRCDIR)/%.c
 
 # Run the program
 run: $(EXECUTABLE)
-	@./$(EXECUTABLE)
+	@$(EXECUTABLE)
 
 # Generate applicant data
 data:
-	@echo "Compiling data generator..."
-	@$(CC) $(CFLAGS) tools/generate_applicants.c $(SRCDIR)/data_generator.c -o $(BINDIR)/generate_data
-	@echo "Running data generator..."
-	@./$(BINDIR)/generate_data
-	@echo "Data generation complete!"
+	@echo Compiling data generator...
+	@$(CC) $(CFLAGS) tools/generate_applicants.c $(SRCDIR)/data_generator.c -o $(BINDIR)\generate_data.exe
+	@echo Running data generator...
+	@$(BINDIR)\generate_data.exe
+	@echo Data generation complete!
 
-# Clean build artifacts
+# Clean build artifacts using Windows 'rmdir' and 'del'
 clean:
-	@rm -rf $(OBJDIR) $(BINDIR)
-	@echo "Cleaned build artifacts"
+	@if exist $(OBJDIR) rmdir /s /q $(OBJDIR)
+	@if exist $(BINDIR) rmdir /s /q $(BINDIR)
+	@echo Cleaned build artifacts.
 
 # Clean and rebuild
 rebuild: clean all
