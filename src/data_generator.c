@@ -49,7 +49,9 @@ static void shuffle(char arr[][4], int n) {
 }
 
 void generate_applicant(Applicant *a) {
-    a->id = 1000 + rand() % 90000;
+    int large_rand = (rand() << 15) | rand();
+    int range_size = 101643;
+    a->id = 25000001 + (large_rand % range_size);
 
     /* Name generation */
     const char *first = FIRST_NAMES[rand() % FN_COUNT];
@@ -77,12 +79,13 @@ void generate_applicant(Applicant *a) {
     shuffle(a->pref, PREF_COUNT);
 
     /* Department from preference */
-    strcpy(a->department, a->pref[rand() % PREF_COUNT]);
+    strcpy(a->department, "NA");
 
+    int large_rand1 = (rand() << 15) | rand();
     /* Marks, rank, allocated */
     a->marks = rand() % 101;
-    a->jee_rank = 1 + rand() % 50000;
-    a->allocated = rand() % 2;
+    a->jee_rank = 1 + large_rand1 % 96000;
+    a->allocated = 0;
 }
 
 void write_applicant_csv(FILE *fp, const Applicant *a) {

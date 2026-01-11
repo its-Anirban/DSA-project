@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include <time.h>
 
-#define TOTAL_APPLICANTS 100
+#define TOTAL_APPLICANTS 364
 
 int main(void) {
     srand((unsigned)time(NULL));

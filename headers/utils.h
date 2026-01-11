@@ -1,7 +1,7 @@
 #ifndef UTILS_H
 #define UTILS_H
 
-/* ============ COLOR CODES FOR UBUNTU/LINUX COMPATIBILITY ============ */
+/* ============ COLOR CODES FOR WINDOWS COMPATIBILITY ============ */
 #define COLOR_RED     "\033[1;31m"      /* Bold Red */
 #define COLOR_GREEN   "\033[1;32m"      /* Bold Green */
 #define COLOR_YELLOW  "\033[1;33m"      /* Bold Yellow */
