@@ -24,7 +24,7 @@ int loadApplicants(Applicant a[]) {
     }
 
     while (fgets(line, sizeof(line), fp) && i < MAX) {
-        // Parse CSV: ID,Name,Password,Category,Pref1,Pref2,Pref3,Pref4,Department,Marks,JEE_Rank,Allocated
+        // Parse CSV: Roll_No.,Name,Password,Category,Pref1,Pref2,Pref3,Pref4,Department,Marks,JEE_Rank,Allocated
         int fields = sscanf(line,
             "%d,%49[^,],%19[^,],%4[^,],%4[^,],%4[^,],%4[^,],%4[^,],%4[^,],%d,%d,%d",
             &a[i].id,
