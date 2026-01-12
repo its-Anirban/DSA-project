@@ -84,7 +84,7 @@ void generate_applicant(Applicant *a) {
     int large_rand1 = (rand() << 15) | rand();
     /* Marks, rank, allocated */
     a->marks = rand() % 101;
-    a->jee_rank = 1 + large_rand1 % 96000;
+    a->jee_rank = 1 + large_rand1 % 50000;
     a->allocated = 0;
 }
 

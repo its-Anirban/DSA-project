@@ -117,49 +117,22 @@ void studentLogin() {
     char name[50];
     char password[20];
     int attempts = 3;
+    int attempts1 = 3;
 
     printf("\n------------- STUDENT LOGIN -----------\n");
 
+    //Load applicants
+    Applicant a[MAX];
+    int n = loadApplicants(a);
+
     while (attempts > 0) {
-        printf("Enter Student Name: ");
-        scanf(" %49[^\n]", name);
-        getchar();
 
-        // Load applicants and check if name exists
-        Applicant a[MAX];
-        int n = loadApplicants(a);
-        int nameIndex = -1;
-
-        for (int i = 0; i < n; i++) {
-            if (strcmp(a[i].name, name) == 0) {
-                nameIndex = i;
-                break;
-            }
-        }
-
-        // Provide immediate feedback on name
-        if (nameIndex == -1) {
-            char msg[150];
-            snprintf(msg, sizeof(msg), "Student with name '%s' is not found in the database!", name);
-            printError(msg);
-            attempts--;
-            char attemptMsg[50];
-            snprintf(attemptMsg, sizeof(attemptMsg), "Attempts left: %d", attempts);
-            printWarning(attemptMsg);
-            printf("\n");
-            continue;
-        } else {
-            char msg[150];
-            snprintf(msg, sizeof(msg), "Student with name '%s' found!", name);
-            printSuccess(msg);
-        }
-
-        // Now ask for Application ID
-        printf("Enter Application ID: ");
+        // First ask for Roll No.
+        printf("Enter Registered Roll No.: ");
         scanf("%d", &id);
         getchar();
 
-        // Check if this Application ID exists in database
+        // Check if this Roll No. exists in database
         int idIndex = -1;
         for (int i = 0; i < n; i++) {
             if (a[i].id == id) {
@@ -168,7 +141,7 @@ void studentLogin() {
             }
         }
 
-        // Provide immediate feedback on ID
+        // Provide immediate feedback on Roll No.
         if (idIndex == -1) {
             char msg[150];
             snprintf(msg, sizeof(msg), "Application ID %d is not found in the database!", id);
@@ -183,41 +156,61 @@ void studentLogin() {
             char msg[150];
             snprintf(msg, sizeof(msg), "Application ID %d found!", id);
             printSuccess(msg);
-        }
 
-        // Check if name and ID match
-        if (nameIndex != idIndex) {
-            printError("Name and Application ID do not match!");
-            attempts--;
-            char attemptMsg[50];
-            snprintf(attemptMsg, sizeof(attemptMsg), "Attempts left: %d", attempts);
-            printWarning(attemptMsg);
-            printf("\n");
-            continue;
-        }
+            // Check if name and Roll No. match
+            while (attempts > 0)
+            {
+                //Now ask for name
+                printf("Enter Student Name: ");
+                scanf(" %49[^\n]", name);
+                getchar();
+                if (strcmp (a[idIndex].name, name) != 0) {
+                    printError("Name and Roll No. do not match! Re-enter name");
+                    attempts--;
+                    char attemptMsg[50];
+                    snprintf(attemptMsg, sizeof(attemptMsg), "Attempts left: %d", attempts);
+                    printWarning(attemptMsg);
+                    printf("\n");
+                    continue;
+                }
+                else{
+                    printSuccess ("Name and Roll Number found in database");
 
-        // Now ask for password
-        printf("Enter Password: ");
-        scanf("%s", password);
-        getchar();
+                    while (attempts1 > 0)
+                    {
+                        // Now ask for password
+                        printf("Enter Password: ");
+                        scanf("%s", password);
+                        getchar();
 
-        // Check password
-        if (strcmp(a[idIndex].password, password) == 0) {
-            printf("\n");
-            printSuccess("Student Login Successful!");
-            printf("\n");
-            studentMenu(id);
-            return;
-        } else {
-            printError("Incorrect password!");
-            attempts--;
-            char attemptMsg[50];
-            snprintf(attemptMsg, sizeof(attemptMsg), "Attempts left: %d", attempts);
-            printWarning(attemptMsg);
-            printf("\n");
+                        // Check password
+                        if (strcmp(a[idIndex].password, password) == 0) {
+                            printf("\n");
+                            printSuccess("Student Login Successful!");
+                            printf("\n");
+                            studentMenu(id);
+                            return;
+                        } else {
+                            printError("Incorrect password! Re-enter password");
+                            attempts1--;
+                            char attemptMsg[50];
+                            snprintf(attemptMsg, sizeof(attemptMsg), "Attempts left to enter password: %d", attempts1);
+                            printWarning(attemptMsg);
+                            printf("\n");
+                        }
+                    }
+                    if (attempts1 == 0)
+                    {
+                        printf ("Login failed after 3 password attempts. Returning to main menu...\n");
+                        break;
+                    }
+                }
+            }
         }
+        if (attempts1 == 0)
+        break;
     }
-
+    if (attempts == 0)
     printf("Login failed after 3 attempts. Returning to main menu...\n");
 }
 
@@ -243,6 +236,9 @@ void studentRegistration() {
 
     newStudent.id = nextId;
     printf("\nYour Application ID: %d\n", newStudent.id);
+
+    /*printf ("Entered Registered Roll_No. ");
+    scanf ("%d\n", &newStudent.id);*/
 
     printf("Enter Name: ");
     scanf(" %49[^\n]", newStudent.name);
@@ -294,6 +290,6 @@ void studentRegistration() {
     printf("\n========================================\n");
     printSuccess("Registration Successful!");
     printf("Your Application ID: %d\n", newStudent.id);
-    printf("Please note your ID for login.\n");
+    printf("Please note your ID and password for future login.\n");
     printf("========================================\n\n");
 }

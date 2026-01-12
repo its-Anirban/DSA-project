@@ -15,7 +15,7 @@ int main(void) {
     }
 
     fprintf(fp,
-        "ID,Name,Password,Category,Pref1,Pref2,Pref3,Pref4,"
+        "Roll_No.,Name,Password,Category,Pref1,Pref2,Pref3,Pref4,"
         "Department,Marks,JEE_Rank,Allocated\n");
 
     for (int i = 0; i < TOTAL_APPLICANTS; i++) {
