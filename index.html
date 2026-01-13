@@ -1,0 +1,1077 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admission Management System</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --secondary: #8b5cf6;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --dark: #1e293b;
+            --gray-50: #f8fafc;
+            --gray-100: #f1f5f9;
+            --gray-200: #e2e8f0;
+            --gray-300: #cbd5e1;
+            --gray-500: #64748b;
+            --gray-700: #334155;
+            --glass: rgba(255, 255, 255, 0.98);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: var(--glass);
+            border-radius: 24px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25), 0 0 0 1px rgba(255, 255, 255, 0.1);
+            overflow: hidden;
+            max-width: 1000px;
+            width: 100%;
+            animation: slideUp 0.5s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            padding: 48px 40px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 60%);
+            animation: pulse 4s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                transform: scale(1);
+                opacity: 0.5;
+            }
+
+            50% {
+                transform: scale(1.1);
+                opacity: 1;
+            }
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            font-weight: 700;
+            margin-bottom: 8px;
+            position: relative;
+            letter-spacing: -0.5px;
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+            position: relative;
+            font-weight: 400;
+        }
+
+        .content {
+            padding: 40px;
+        }
+
+        .screen {
+            display: none;
+        }
+
+        .screen.active {
+            display: block;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Back Button */
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 20px;
+            background: var(--gray-100);
+            color: var(--gray-700);
+            border: none;
+            border-radius: 12px;
+            font-size: 0.95em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin-bottom: 24px;
+        }
+
+        .back-btn:hover {
+            background: var(--gray-200);
+            transform: translateX(-4px);
+        }
+
+        .back-btn svg {
+            width: 18px;
+            height: 18px;
+        }
+
+        /* Section Title */
+        .section-title {
+            font-size: 1.75em;
+            font-weight: 700;
+            color: var(--dark);
+            margin-bottom: 8px;
+            text-align: center;
+        }
+
+        .section-subtitle {
+            text-align: center;
+            color: var(--gray-500);
+            margin-bottom: 32px;
+            font-size: 1em;
+        }
+
+        /* Button Styles */
+        .button-group {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .btn {
+            padding: 18px 28px;
+            border: none;
+            border-radius: 14px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            box-shadow: 0 4px 14px rgba(99, 102, 241, 0.4);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(99, 102, 241, 0.5);
+        }
+
+        .btn-secondary {
+            background: white;
+            color: var(--dark);
+            border: 2px solid var(--gray-200);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--primary);
+            background: var(--gray-50);
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.15);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            box-shadow: 0 4px 14px rgba(16, 185, 129, 0.4);
+        }
+
+        .btn-success:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(16, 185, 129, 0.5);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            color: white;
+            box-shadow: 0 4px 14px rgba(239, 68, 68, 0.4);
+        }
+
+        .btn-danger:hover {
+            transform: translateY(-2px);
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: var(--gray-500);
+            border: 2px solid var(--gray-200);
+        }
+
+        .btn-outline:hover {
+            background: var(--gray-100);
+            color: var(--gray-700);
+        }
+
+        /* Form Styles */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--dark);
+            font-size: 0.95em;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 14px 18px;
+            border: 2px solid var(--gray-200);
+            border-radius: 12px;
+            font-size: 1em;
+            font-family: inherit;
+            transition: all 0.2s;
+            background: white;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
+        }
+
+        .inline-form {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+        }
+
+        .preference-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+        }
+
+        /* Alert Styles */
+        .alert {
+            padding: 16px 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            display: none;
+            font-weight: 500;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .alert-success {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(5, 150, 105, 0.1) 100%);
+            color: #065f46;
+            border-left: 4px solid var(--success);
+        }
+
+        .alert-error {
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.1) 0%, rgba(220, 38, 38, 0.1) 100%);
+            color: #991b1b;
+            border-left: 4px solid var(--danger);
+        }
+
+        .alert-warning {
+            background: linear-gradient(135deg, rgba(245, 158, 11, 0.1) 0%, rgba(217, 119, 6, 0.1) 100%);
+            color: #92400e;
+            border-left: 4px solid var(--warning);
+        }
+
+        .alert.show {
+            display: block;
+        }
+
+        /* Status Feedback */
+        .status-message {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 16px;
+            border-radius: 10px;
+            margin-bottom: 16px;
+            font-weight: 500;
+        }
+
+        .status-message.success {
+            background: rgba(16, 185, 129, 0.1);
+            color: #065f46;
+        }
+
+        .status-message.error {
+            background: rgba(239, 68, 68, 0.1);
+            color: #991b1b;
+        }
+
+        .status-message.info {
+            background: rgba(99, 102, 241, 0.1);
+            color: #3730a3;
+        }
+
+        /* Table Styles */
+        .table-wrapper {
+            overflow-x: auto;
+            border-radius: 16px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            border: 1px solid var(--gray-200);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+        }
+
+        thead {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+        }
+
+        th {
+            padding: 16px 20px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 0.9em;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        td {
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--gray-100);
+            color: var(--gray-700);
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        tr:hover {
+            background: var(--gray-50);
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.8em;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .status-selected {
+            background: rgba(16, 185, 129, 0.15);
+            color: #059669;
+        }
+
+        .status-waiting {
+            background: rgba(245, 158, 11, 0.15);
+            color: #d97706;
+        }
+
+        /* Profile Card */
+        .profile-card {
+            background: white;
+            padding: 28px;
+            border-radius: 16px;
+            margin-bottom: 24px;
+            border: 1px solid var(--gray-200);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        }
+
+        .profile-card h3 {
+            color: var(--primary);
+            margin-bottom: 24px;
+            font-size: 1.25em;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .profile-item {
+            display: grid;
+            grid-template-columns: 180px 1fr;
+            padding: 14px 0;
+            border-bottom: 1px solid var(--gray-100);
+        }
+
+        .profile-item:last-child {
+            border-bottom: none;
+        }
+
+        .profile-label {
+            font-weight: 600;
+            color: var(--gray-500);
+        }
+
+        .profile-value {
+            color: var(--dark);
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 16px;
+            margin: 24px 0;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            padding: 24px;
+            border-radius: 16px;
+            text-align: center;
+            box-shadow: 0 4px 14px rgba(99, 102, 241, 0.3);
+        }
+
+        .stat-value {
+            font-size: 2.5em;
+            font-weight: 700;
+            line-height: 1;
+        }
+
+        .stat-label {
+            font-size: 0.85em;
+            opacity: 0.9;
+            margin-top: 8px;
+            font-weight: 500;
+        }
+
+        /* Attempts Badge */
+        .attempts-badge {
+            background: rgba(245, 158, 11, 0.15);
+            color: #b45309;
+            padding: 10px 16px;
+            border-radius: 10px;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 12px;
+        }
+
+        /* No Data */
+        .no-data {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--gray-500);
+        }
+
+        .no-data-icon {
+            font-size: 4em;
+            margin-bottom: 16px;
+        }
+
+        /* Login Step */
+        .login-step {
+            background: var(--gray-50);
+            padding: 24px;
+            border-radius: 16px;
+            margin-bottom: 16px;
+        }
+
+        /* Feature Cards for Menu */
+        .feature-card {
+            background: white;
+            border: 2px solid var(--gray-200);
+            border-radius: 16px;
+            padding: 24px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .feature-card:hover {
+            border-color: var(--primary);
+            box-shadow: 0 8px 25px rgba(99, 102, 241, 0.15);
+            transform: translateY(-2px);
+        }
+
+        .feature-card .icon {
+            font-size: 2.5em;
+            margin-bottom: 12px;
+        }
+
+        .feature-card h3 {
+            font-size: 1.1em;
+            color: var(--dark);
+            margin-bottom: 6px;
+        }
+
+        .feature-card p {
+            font-size: 0.85em;
+            color: var(--gray-500);
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.8em;
+            }
+
+            .content {
+                padding: 24px;
+            }
+
+            .button-group {
+                grid-template-columns: 1fr;
+            }
+
+            .preference-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .profile-item {
+                grid-template-columns: 1fr;
+                gap: 4px;
+            }
+
+            th,
+            td {
+                padding: 12px;
+                font-size: 0.9em;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎓 Admission Management System</h1>
+            <p>Streamlined admission process for students and administrators</p>
+        </div>
+
+        <div class="content">
+            <!-- Main Menu -->
+            <div id="mainMenu" class="screen active">
+                <h2 class="section-title">Welcome to AMS</h2>
+                <p class="section-subtitle">Select your portal to continue</p>
+                <div class="button-group">
+                    <button class="btn btn-primary" onclick="goToStudentPortal()">👤 Student Portal</button>
+                    <button class="btn btn-primary" onclick="goToAdminPortal()">🔐 Admin Portal</button>
+                    <button class="btn btn-outline" onclick="exitApp()">❌ Exit Application</button>
+                </div>
+            </div>
+
+            <!-- Student Portal Menu -->
+            <div id="studentPortalMenu" class="screen">
+                <button class="back-btn" onclick="backToMainMenu()">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                    </svg>
+                    Back to Main Menu
+                </button>
+                <h2 class="section-title">Student Portal</h2>
+                <p class="section-subtitle">Login to access your dashboard or register as a new student</p>
+                <div class="button-group">
+                    <button class="btn btn-primary" onclick="goToStudentLogin()">🔑 Student Login</button>
+                    <button class="btn btn-primary" onclick="goToStudentRegistration()">📝 New Registration</button>
+                </div>
+            </div>
+
+            <!-- Student Login -->
+            <div id="studentLogin" class="screen">
+                <button class="back-btn" onclick="backToStudentPortal()">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                    </svg>
+                    Back to Student Portal
+                </button>
+                <h2 class="section-title">Student Login</h2>
+                <p class="section-subtitle">Enter your credentials step by step</p>
+                <div id="loginAlert" class="alert"></div>
+                <div id="loginStatusMessages"></div>
+                <div id="loginStep1" class="login-step">
+                    <div class="form-group">
+                        <label>Full Name</label>
+                        <input type="text" id="loginName" placeholder="Enter your full name as registered">
+                    </div>
+                    <button class="btn btn-primary" onclick="verifyStudentName()">Verify Name →</button>
+                </div>
+                <div id="loginStep2" class="login-step" style="display:none;">
+                    <div class="form-group">
+                        <label>Application ID</label>
+                        <input type="number" id="loginId" placeholder="Enter your Application ID">
+                    </div>
+                    <button class="btn btn-primary" onclick="verifyStudentId()">Verify ID →</button>
+                </div>
+                <div id="loginStep3" class="login-step" style="display:none;">
+                    <div class="form-group">
+                        <label>Password</label>
+                        <input type="password" id="loginPassword" placeholder="Enter your password">
+                    </div>
+                    <button class="btn btn-primary" onclick="performStudentLogin()">Login</button>
+                </div>
+                <div id="attemptsInfo"></div>
+            </div>
+
+            <!-- Student Registration -->
+            <div id="studentRegistration" class="screen">
+                <button class="back-btn" onclick="backToStudentPortal()">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                    </svg>
+                    Back to Student Portal
+                </button>
+                <h2 class="section-title">New Student Registration</h2>
+                <p class="section-subtitle">Fill in your details to register for admission</p>
+                <div id="regAlert" class="alert"></div>
+                <form id="registrationForm">
+                    <div class="inline-form">
+                        <div class="form-group">
+                            <label>Full Name</label>
+                            <input type="text" id="regName" placeholder="Enter your full name" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Password (3-9 characters)</label>
+                            <input type="password" id="regPassword" placeholder="Create a password" required>
+                        </div>
+                    </div>
+                    <div class="inline-form">
+                        <div class="form-group">
+                            <label>Category</label>
+                            <select id="regCategory" required>
+                                <option value="">Select Category</option>
+                                <option value="GEN">General (GEN)</option>
+                                <option value="OBC">OBC</option>
+                                <option value="SC">SC</option>
+                                <option value="ST">ST</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>JEE Rank</label>
+                            <input type="number" id="regJeeRank" placeholder="Enter JEE Rank" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>HS Marks</label>
+                        <input type="number" id="regMarks" placeholder="Enter HS Marks" required
+                            style="max-width: 300px;">
+                    </div>
+                    <div class="form-group">
+                        <label>Department Preferences (in order of priority)</label>
+                        <div class="preference-grid">
+                            <div class="form-group" style="margin-bottom:0;"><label
+                                    style="font-size:0.85em;color:var(--gray-500);">1st Preference</label>
+                                <select id="pref1" required onchange="updatePreferenceOptions()">
+                                    <option value="">Select</option>
+                                    <option value="CSE">CSE</option>
+                                    <option value="IT">IT</option>
+                                    <option value="TT">TT</option>
+                                    <option value="APM">APM</option>
+                                </select>
+                            </div>
+                            <div class="form-group" style="margin-bottom:0;"><label
+                                    style="font-size:0.85em;color:var(--gray-500);">2nd Preference</label>
+                                <select id="pref2" required onchange="updatePreferenceOptions()">
+                                    <option value="">Select</option>
+                                    <option value="CSE">CSE</option>
+                                    <option value="IT">IT</option>
+                                    <option value="TT">TT</option>
+                                    <option value="APM">APM</option>
+                                </select>
+                            </div>
+                            <div class="form-group" style="margin-bottom:0;"><label
+                                    style="font-size:0.85em;color:var(--gray-500);">3rd Preference</label>
+                                <select id="pref3" required onchange="updatePreferenceOptions()">
+                                    <option value="">Select</option>
+                                    <option value="CSE">CSE</option>
+                                    <option value="IT">IT</option>
+                                    <option value="TT">TT</option>
+                                    <option value="APM">APM</option>
+                                </select>
+                            </div>
+                            <div class="form-group" style="margin-bottom:0;"><label
+                                    style="font-size:0.85em;color:var(--gray-500);">4th Preference</label>
+                                <select id="pref4" required onchange="updatePreferenceOptions()">
+                                    <option value="">Select</option>
+                                    <option value="CSE">CSE</option>
+                                    <option value="IT">IT</option>
+                                    <option value="TT">TT</option>
+                                    <option value="APM">APM</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+                <button class="btn btn-primary" onclick="performStudentRegistration()">Register Now</button>
+            </div>
+
+            <!-- Student Dashboard -->
+            <div id="studentDashboard" class="screen">
+                <button class="back-btn" onclick="studentLogout()">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                    </svg>
+                    Logout
+                </button>
+                <h2 class="section-title">Student Dashboard</h2>
+                <p class="section-subtitle" id="welcomeMessage">Welcome back!</p>
+                <div class="button-group">
+                    <button class="btn btn-secondary" onclick="viewStudentProfile()">👤 View Profile</button>
+                    <button class="btn btn-secondary" onclick="viewMeritRank()">📊 Merit Rank</button>
+                    <button class="btn btn-secondary" onclick="viewAllocationStatus()">✅ Allocation Status</button>
+                    <button class="btn btn-secondary" onclick="editPreferences()">🎯 Edit Preferences</button>
+                    <button class="btn btn-secondary" onclick="changePassword()">🔐 Change Password</button>
+                    <button class="btn btn-danger" onclick="studentLogout()">🚪 Logout</button>
+                </div>
+            </div>
+
+            <!-- Student Profile View -->
+            <div id="studentProfileView" class="screen">
+                <button class="back-btn" onclick="backToStudentDashboard()">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                    </svg>
+                    Back to Dashboard
+                </button>
+                <h2 class="section-title">Your Profile</h2>
+                <div id="profileContent" class="profile-card"></div>
+            </div>
+
+            <!-- Merit Rank View -->
+            <div id="meritRankView" class="screen">
+                <button class="back-btn" onclick="backToStudentDashboard()">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                    </svg>
+                    Back to Dashboard
+                </button>
+                <h2 class="section-title">Your Merit Position</h2>
+                <div id="meritContent" class="profile-card"></div>
+            </div>
+
+            <!-- Allocation Status View -->
+            <div id="allocationStatusView" class="screen">
+                <button class="back-btn" onclick="backToStudentDashboard()">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                    </svg>
+                    Back to Dashboard
+                </button>
+                <h2 class="section-title">Allocation Status</h2>
+                <div id="allocationContent" class="profile-card"></div>
+            </div>
+
+            <!-- Edit Preferences -->
+            <div id="editPreferencesView" class="screen">
+                <button class="back-btn" onclick="backToStudentDashboard()">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                    </svg>
+                    Back to Dashboard
+                </button>
+                <h2 class="section-title">Edit Preferences</h2>
+                <p class="section-subtitle">Update your department preferences</p>
+                <div id="prefsAlert" class="alert"></div>
+                <div class="preference-grid">
+                    <div class="form-group"><label>1st Preference</label><select id="editPref1">
+                            <option value="">Select</option>
+                            <option value="CSE">CSE</option>
+                            <option value="IT">IT</option>
+                            <option value="TT">TT</option>
+                            <option value="APM">APM</option>
+                        </select></div>
+                    <div class="form-group"><label>2nd Preference</label><select id="editPref2">
+                            <option value="">Select</option>
+                            <option value="CSE">CSE</option>
+                            <option value="IT">IT</option>
+                            <option value="TT">TT</option>
+                            <option value="APM">APM</option>
+                        </select></div>
+                    <div class="form-group"><label>3rd Preference</label><select id="editPref3">
+                            <option value="">Select</option>
+                            <option value="CSE">CSE</option>
+                            <option value="IT">IT</option>
+                            <option value="TT">TT</option>
+                            <option value="APM">APM</option>
+                        </select></div>
+                    <div class="form-group"><label>4th Preference</label><select id="editPref4">
+                            <option value="">Select</option>
+                            <option value="CSE">CSE</option>
+                            <option value="IT">IT</option>
+                            <option value="TT">TT</option>
+                            <option value="APM">APM</option>
+                        </select></div>
+                </div>
+                <button class="btn btn-primary" onclick="savePreferences()">Save Changes</button>
+            </div>
+
+            <!-- Change Password -->
+            <div id="changePasswordView" class="screen">
+                <button class="back-btn" onclick="backToStudentDashboard()">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                    </svg>
+                    Back to Dashboard
+                </button>
+                <h2 class="section-title">Change Password</h2>
+                <div id="pwdAlert" class="alert"></div>
+                <div class="form-group"><label>Current Password</label><input type="password" id="currentPwd"
+                        placeholder="Enter current password"></div>
+                <div class="form-group"><label>New Password (3-9 characters)</label><input type="password" id="newPwd"
+                        placeholder="Enter new password"></div>
+                <div class="form-group"><label>Confirm New Password</label><input type="password" id="confirmPwd"
+                        placeholder="Confirm new password"></div>
+                <button class="btn btn-primary" onclick="updatePassword()">Update Password</button>
+            </div>
+
+            <!-- Admin Portal Login -->
+            <div id="adminPortalMenu" class="screen">
+                <button class="back-btn" onclick="backToMainMenu()">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                    </svg>
+                    Back to Main Menu
+                </button>
+                <h2 class="section-title">Admin Portal</h2>
+                <p class="section-subtitle">Login with your administrator credentials</p>
+                <div id="adminLoginAlert" class="alert"></div>
+                <div id="adminStatusMessages"></div>
+                <div id="adminStep1" class="login-step">
+                    <div class="form-group"><label>Employee ID</label><input type="number" id="adminEmpId"
+                            placeholder="Enter Employee ID"></div>
+                    <button class="btn btn-primary" onclick="verifyAdminEmpId()">Verify Employee ID →</button>
+                </div>
+                <div id="adminStep2" class="login-step" style="display:none;">
+                    <div class="form-group"><label>Admin Username</label><input type="text" id="adminUsername"
+                            placeholder="Enter Username"></div>
+                    <button class="btn btn-primary" onclick="verifyAdminUsername()">Continue →</button>
+                </div>
+                <div id="adminStep3" class="login-step" style="display:none;">
+                    <div class="form-group"><label>Password</label><input type="password" id="adminPassword"
+                            placeholder="Enter Password"></div>
+                    <button class="btn btn-primary" onclick="performAdminLogin()">Login</button>
+                </div>
+                <div id="adminAttemptsInfo"></div>
+            </div>
+
+            <!-- Admin Dashboard -->
+            <div id="adminDashboard" class="screen">
+                <button class="back-btn" onclick="adminLogout()">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                    </svg>
+                    Logout
+                </button>
+                <h2 class="section-title">Admin Dashboard</h2>
+                <p class="section-subtitle">Manage applicants and generate merit lists</p>
+                <div class="button-group">
+                    <button class="btn btn-secondary" onclick="viewAllApplicants()">👥 All Applicants</button>
+                    <button class="btn btn-secondary" onclick="searchApplicants()">🔍 Search</button>
+                    <button class="btn btn-secondary" onclick="viewMeritList()">📊 Merit List</button>
+                    <button class="btn btn-secondary" onclick="viewWaitingList()">⏳ Waiting List</button>
+                    <button class="btn btn-secondary" onclick="viewCategoryWise()">📋 By Category</button>
+                    <button class="btn btn-secondary" onclick="viewDepartmentWise()">🏢 By Department</button>
+                    <button class="btn btn-success" onclick="generateMeritList()">⚙️ Generate Merit List</button>
+                    <button class="btn btn-danger" onclick="adminLogout()">🚪 Logout</button>
+                </div>
+            </div>
+
+            <!-- View All Applicants -->
+            <div id="viewAllApplicantsScreen" class="screen">
+                <button class="back-btn" onclick="backToAdminDashboard()">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                    </svg>
+                    Back to Dashboard
+                </button>
+                <h2 class="section-title">All Applicants</h2>
+                <div id="allApplicantsTable" class="table-wrapper"></div>
+            </div>
+
+            <!-- Search Applicants -->
+            <div id="searchApplicantsScreen" class="screen">
+                <button class="back-btn" onclick="backToAdminDashboard()">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                    </svg>
+                    Back to Dashboard
+                </button>
+                <h2 class="section-title">Search Applicants</h2>
+                <div class="button-group" style="max-width:400px;">
+                    <button class="btn btn-secondary" onclick="showSearchById()">Search by ID</button>
+                    <button class="btn btn-secondary" onclick="showSearchByName()">Search by Name</button>
+                </div>
+                <div id="searchIdSection" style="display:none;margin-top:20px;">
+                    <div class="form-group"><label>Application ID</label><input type="number" id="searchId"
+                            placeholder="Enter Application ID"></div>
+                    <button class="btn btn-primary" onclick="performSearchById()">Search</button>
+                    <div id="searchIdResult" class="table-wrapper" style="margin-top:20px;"></div>
+                </div>
+                <div id="searchNameSection" style="display:none;margin-top:20px;">
+                    <div class="form-group"><label>Student Name</label><input type="text" id="searchName"
+                            placeholder="Enter Student Name"></div>
+                    <button class="btn btn-primary" onclick="performSearchByName()">Search</button>
+                    <div id="searchNameResult" class="table-wrapper" style="margin-top:20px;"></div>
+                </div>
+            </div>
+
+            <!-- Merit List -->
+            <div id="meritListScreen" class="screen">
+                <button class="back-btn" onclick="backToAdminDashboard()">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                    </svg>
+                    Back to Dashboard
+                </button>
+                <h2 class="section-title">Merit List</h2>
+                <p class="section-subtitle">Selected candidates</p>
+                <div id="meritStats" class="stats-grid"></div>
+                <div id="meritListTable" class="table-wrapper"></div>
+            </div>
+
+            <!-- Waiting List -->
+            <div id="waitingListScreen" class="screen">
+                <button class="back-btn" onclick="backToAdminDashboard()">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                    </svg>
+                    Back to Dashboard
+                </button>
+                <h2 class="section-title">Waiting List</h2>
+                <p class="section-subtitle">Candidates awaiting allocation</p>
+                <div id="waitingListTable" class="table-wrapper"></div>
+            </div>
+
+            <!-- Category-wise -->
+            <div id="categoryWiseScreen" class="screen">
+                <button class="back-btn" onclick="backToAdminDashboard()">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                    </svg>
+                    Back to Dashboard
+                </button>
+                <h2 class="section-title">Category-wise Merit List</h2>
+                <div class="form-group" style="max-width:300px;">
+                    <label>Select Category</label>
+                    <select id="categorySelect" onchange="viewSelectedCategory()">
+                        <option value="">Choose category...</option>
+                        <option value="GEN">General (GEN)</option>
+                        <option value="OBC">OBC</option>
+                        <option value="SC">SC</option>
+                        <option value="ST">ST</option>
+                    </select>
+                </div>
+                <div id="categoryMeritTable" class="table-wrapper"></div>
+            </div>
+
+            <!-- Department-wise -->
+            <div id="departmentWiseScreen" class="screen">
+                <button class="back-btn" onclick="backToAdminDashboard()">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                    </svg>
+                    Back to Dashboard
+                </button>
+                <h2 class="section-title">Department-wise Merit List</h2>
+                <div class="form-group" style="max-width:300px;">
+                    <label>Select Department</label>
+                    <select id="departmentSelect" onchange="viewSelectedDepartment()">
+                        <option value="">Choose department...</option>
+                        <option value="CSE">CSE</option>
+                        <option value="IT">IT</option>
+                        <option value="TT">TT</option>
+                        <option value="APM">APM</option>
+                    </select>
+                </div>
+                <div id="departmentMeritTable" class="table-wrapper"></div>
+            </div>
+
+            <!-- Generate Merit List -->
+            <div id="generateMeritScreen" class="screen">
+                <button class="back-btn" onclick="backToAdminDashboard()">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                    </svg>
+                    Back to Dashboard
+                </button>
+                <h2 class="section-title">Generate Merit List</h2>
+                <p class="section-subtitle">Choose a sorting algorithm and generate the merit list</p>
+                <div id="meritGenAlert" class="alert"></div>
+                <div class="form-group" style="max-width:400px;">
+                    <label>Sorting Algorithm</label>
+                    <select id="sortAlgorithm">
+                        <option value="">Select Algorithm</option>
+                        <option value="selection">Selection Sort</option>
+                        <option value="insertion">Insertion Sort</option>
+                        <option value="merge">Merge Sort (Recommended)</option>
+                        <option value="quick">Quick Sort</option>
+                    </select>
+                </div>
+                <button class="btn btn-success" onclick="performGenerateMeritList()">🚀 Generate Merit List</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+
+</html>

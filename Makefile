@@ -63,5 +63,27 @@ clean:
 # Clean and rebuild
 rebuild: clean all
 
+# API Server sources
+API_SOURCES = $(SRCDIR)/api_server.c \
+              $(SRCDIR)/csv_handler.c \
+              $(SRCDIR)/sorting.c \
+              $(SRCDIR)/utils.c \
+              mongoose/mongoose.c
+
+# Build API server executable
+$(BINDIR)/api_server: $(BINDIR) $(API_SOURCES)
+	$(CC) $(CFLAGS) -I./mongoose -o $@ $(API_SOURCES)
+	@echo "API Server build complete!"
+
+# Build and run API server (connects frontend to CSV files)
+api: $(BINDIR)/api_server
+	@./$(BINDIR)/api_server
+
+# Stop server running on port 8080
+stop:
+	@echo "Stopping server on port 8080..."
+	@-lsof -ti:8080 | xargs -r kill -9 2>/dev/null || true
+	@echo "Server stopped."
+
 # Phony targets
-.PHONY: all run clean rebuild data
+.PHONY: all run clean rebuild data api stop

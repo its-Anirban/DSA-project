@@ -198,7 +198,7 @@ void studentLogin() {
 
         // Now ask for password
         printf("Enter Password: ");
-        scanf("%s", password);
+        scanf("%19s", password);
         getchar();
 
         // Check password
@@ -223,7 +223,7 @@ void studentLogin() {
 
 /* ============ STUDENT REGISTRATION ============ */
 void studentRegistration() {
-    Applicant newStudent;
+    Applicant newStudent = {0};  // Initialize struct with zeros
     Applicant a[MAX];
     int n = loadApplicants(a);
     int nextId = 1000;
@@ -249,12 +249,12 @@ void studentRegistration() {
     getchar();
 
     printf("Enter Password (3-9 characters): ");
-    scanf("%s", newStudent.password);
+    scanf("%19s", newStudent.password);
     getchar();
 
     while (strlen(newStudent.password) < 3 || strlen(newStudent.password) > 9) {
         printf("Password must be 3-9 characters. Enter again: ");
-        scanf("%s", newStudent.password);
+        scanf("%19s", newStudent.password);
         getchar();
     }
 
@@ -265,7 +265,7 @@ void studentRegistration() {
     printf("4. ST\n");
     printf("Enter your choice (1-4): ");
     int catChoice;
-    scanf("%d", &catChoice);
+    scanf(" %d", &catChoice);
     getchar();
     const char *categories[] = {"GEN", "OBC", "SC", "ST"};
     if (catChoice >= 1 && catChoice <= 4) {
@@ -276,11 +276,11 @@ void studentRegistration() {
 
     printf("Enter JEE Rank: ");
     scanf("%d", &newStudent.jee_rank);
-    getchar();
+    clearInputBuffer();
 
     printf("Enter HS Marks: ");
     scanf("%d", &newStudent.marks);
-    getchar();
+    clearInputBuffer();
 
     printf("\nNow choose department preferences:\n\n");
     printf("Available Departments:\n");
@@ -303,7 +303,7 @@ void studentRegistration() {
         }
     }
 
-    strcpy(newStudent.department, "NA");
+    strcpy(newStudent.department, "N/A");
     newStudent.allocated = 0;
 
     // Save to CSV

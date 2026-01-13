@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Merit List</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .controls {
+            padding: 20px 30px;
+            background: #f8f9fa;
+            border-bottom: 1px solid #e9ecef;
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .controls input,
+        .controls button,
+        .controls select {
+            padding: 10px 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1em;
+        }
+
+        .controls input {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .controls button {
+            background: #667eea;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background 0.3s;
+        }
+
+        .controls button:hover {
+            background: #764ba2;
+        }
+
+        .controls select {
+            background: white;
+            cursor: pointer;
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+            padding: 30px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.95em;
+        }
+
+        thead {
+            background: #f8f9fa;
+        }
+
+        th {
+            padding: 15px;
+            text-align: left;
+            font-weight: 700;
+            color: #333;
+            border-bottom: 2px solid #667eea;
+            text-transform: uppercase;
+            font-size: 0.85em;
+            letter-spacing: 0.5px;
+        }
+
+        td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #e9ecef;
+            color: #555;
+        }
+
+        tr:hover {
+            background: #f8f9fa;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.85em;
+            text-align: center;
+            min-width: 80px;
+        }
+
+        .status-selected {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-waiting {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .stats {
+            padding: 20px 30px;
+            background: #f8f9fa;
+            border-top: 1px solid #e9ecef;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 1.8em;
+            font-weight: 700;
+            color: #667eea;
+        }
+
+        .stat-label {
+            font-size: 0.9em;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        .no-data {
+            text-align: center;
+            padding: 40px;
+            color: #999;
+            font-size: 1.1em;
+        }
+
+        .file-input {
+            padding: 20px 30px;
+            background: #f8f9fa;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .file-input input[type="file"] {
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .error {
+            color: #dc3545;
+            padding: 15px;
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            border-radius: 5px;
+            margin: 0 30px 20px;
+            display: none;
+        }
+
+        .success {
+            color: #155724;
+            padding: 15px;
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            border-radius: 5px;
+            margin: 0 30px 20px;
+            display: none;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.8em;
+            }
+
+            .controls {
+                flex-direction: column;
+            }
+
+            .controls input {
+                min-width: auto;
+            }
+
+            table {
+                font-size: 0.85em;
+            }
+
+            th, td {
+                padding: 10px;
+            }
+
+            .stats {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎓 Merit List</h1>
+            <p>Admission Management System - Student Rankings</p>
+        </div>
+
+        <div class="error" id="error"></div>
+        <div class="success" id="success"></div>
+
+        <div class="controls">
+            <input type="text" id="searchInput" placeholder="Search by Name, ID, or Department...">
+            <select id="statusFilter">
+                <option value="">All Status</option>
+                <option value="SELECTED">Selected</option>
+                <option value="WAITING">Waiting</option>
+            </select>
+            <select id="deptFilter">
+                <option value="">All Departments</option>
+                <option value="CSE">CSE</option>
+                <option value="IT">IT</option>
+                <option value="TT">TT</option>
+                <option value="APM">APM</option>
+            </select>
+            <button onclick="resetFilters()">Reset Filters</button>
+        </div>
+
+        <div class="table-wrapper">
+            <table id="meritTable">
+                <thead>
+                    <tr>
+                        <th>Rank</th>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Category</th>
+                        <th>Department</th>
+                        <th>Marks</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody id="tableBody">
+                    <tr>
+                        <td colspan="7" class="no-data">No data loaded. Please upload a CSV file.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="stats" id="statsContainer" style="display: none;">
+            <div class="stat-item">
+                <div class="stat-value" id="totalCount">0</div>
+                <div class="stat-label">Total Applicants</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" id="selectedCount">0</div>
+                <div class="stat-label">Selected</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" id="waitingCount">0</div>
+                <div class="stat-label">Waiting</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let allData = [];
+
+        function parseCSV(csv) {
+            const lines = csv.trim().split('\n');
+            if (lines.length < 2) {
+                throw new Error('Invalid CSV format');
+            }
+
+            allData = [];
+            // Skip header
+            for (let i = 1; i < lines.length; i++) {
+                const parts = lines[i].split(',');
+                if (parts.length >= 7) {
+                    allData.push({
+                        rank: parts[0].trim(),
+                        id: parts[1].trim(),
+                        name: parts[2].trim(),
+                        category: parts[3].trim(),
+                        dept: parts[4].trim(),
+                        marks: parts[5].trim(),
+                        status: parts[6].trim()
+                    });
+                }
+            }
+
+            renderTable(allData);
+            updateStats();
+        }
+
+        function renderTable(data) {
+            const tbody = document.getElementById('tableBody');
+            if (data.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="7" class="no-data">No matching records found.</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = data.map(row => `
+                <tr>
+                    <td>${row.rank}</td>
+                    <td>${row.id}</td>
+                    <td>${row.name}</td>
+                    <td>${row.category}</td>
+                    <td>${row.dept}</td>
+                    <td>${row.marks}</td>
+                    <td>
+                        <span class="status-badge ${row.status === 'SELECTED' ? 'status-selected' : 'status-waiting'}">
+                            ${row.status}
+                        </span>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function filterTable() {
+            const searchText = document.getElementById('searchInput').value.toLowerCase();
+            const statusFilter = document.getElementById('statusFilter').value;
+            const deptFilter = document.getElementById('deptFilter').value;
+
+            const filtered = allData.filter(row => {
+                const matchSearch = !searchText || 
+                    row.name.toLowerCase().includes(searchText) ||
+                    row.id.includes(searchText) ||
+                    row.dept.toLowerCase().includes(searchText);
+
+                const matchStatus = !statusFilter || row.status === statusFilter;
+                let matchDept = true;
+                
+                if (deptFilter) {
+                    // If filtering by department, show records with that department
+                    matchDept = row.dept === deptFilter;
+                }
+
+                return matchSearch && matchStatus && matchDept;
+            });
+
+            renderTable(filtered);
+        }
+
+        function resetFilters() {
+            document.getElementById('searchInput').value = '';
+            document.getElementById('statusFilter').value = '';
+            document.getElementById('deptFilter').value = '';
+            renderTable(allData);
+        }
+
+        function updateStats() {
+            if (allData.length === 0) {
+                document.getElementById('statsContainer').style.display = 'none';
+                return;
+            }
+
+            document.getElementById('statsContainer').style.display = 'grid';
+            document.getElementById('totalCount').textContent = allData.length;
+            document.getElementById('selectedCount').textContent = allData.filter(r => r.status === 'SELECTED').length;
+            document.getElementById('waitingCount').textContent = allData.filter(r => r.status === 'WAITING').length;
+        }
+
+        function showError(message) {
+            const errorDiv = document.getElementById('error');
+            errorDiv.textContent = message;
+            errorDiv.style.display = 'block';
+            setTimeout(() => errorDiv.style.display = 'none', 5000);
+        }
+
+        function showSuccess(message) {
+            const successDiv = document.getElementById('success');
+            successDiv.textContent = message;
+            successDiv.style.display = 'block';
+            setTimeout(() => successDiv.style.display = 'none', 3000);
+        }
+
+        // Add event listeners for filters
+        document.getElementById('searchInput').addEventListener('keyup', filterTable);
+        document.getElementById('statusFilter').addEventListener('change', filterTable);
+        document.getElementById('deptFilter').addEventListener('change', filterTable);
+
+        // Try to load merit_list.csv on page load
+        window.addEventListener('load', function() {
+            fetch('merit_list.csv')
+                .then(response => response.text())
+                .then(csv => parseCSV(csv))
+                .catch(() => {
+                    // File not found or error - that's ok, user can upload
+                });
+        });
+    </script>
+</body>
+</html>

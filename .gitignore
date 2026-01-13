@@ -1,0 +1,5 @@
+mongoose
+logs/
+bin/
+obj/
+*.log

@@ -139,14 +139,14 @@ void studentMenu(long int studentId) {
                 char oldPass[20], newPass[20];
 
                 printf("Enter current password: ");
-                scanf("%s", oldPass);
+                scanf("%19s", oldPass);
                 getchar();
 
                 if (strcmp(oldPass, a[studentIndex].password) == 0) {
                     int validPass = 0;
                     while (!validPass) {
                         printf("Enter new password (3-9 characters): ");
-                        scanf("%s", newPass);
+                        scanf("%19s", newPass);
                         getchar();
 
                         if (strlen(newPass) >= 3 && strlen(newPass) <= 9) {

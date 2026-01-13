@@ -27,7 +27,7 @@ void addApplicant() {
     getchar();
 
     printf("Set Password (3-9 chars): ");
-    scanf("%s", a[n].password);
+    scanf("%19s", a[n].password);
     getchar();
 
     printf("Enter Category:\n");
@@ -37,7 +37,7 @@ void addApplicant() {
     printf("4. ST\n");
     printf("Enter your choice (1-4): ");
     int catChoice;
-    scanf("%d", &catChoice);
+    scanf(" %d", &catChoice);
     getchar();
     const char *categories[] = {"GEN", "OBC", "SC", "ST"};
     if (catChoice >= 1 && catChoice <= 4) {
@@ -48,11 +48,11 @@ void addApplicant() {
 
     printf("Enter JEE Rank: ");
     scanf("%d", &a[n].jee_rank);
-    getchar();
+    clearInputBuffer();
 
     printf("Enter HS Marks: ");
     scanf("%d", &a[n].marks);
-    getchar();
+    clearInputBuffer();
 
     printf("Enter Preferences (1-4 for CSE/IT/TT/APM):\n");
     printf("1. CSE\n");
@@ -64,7 +64,7 @@ void addApplicant() {
         int deptChoice;
         printf("Preference %d [1-4]: ", i + 1);
         scanf("%d", &deptChoice);
-        getchar();
+        clearInputBuffer();
         if (deptChoice >= 1 && deptChoice <= 4) {
             strcpy(a[n].pref[i], depts[deptChoice - 1]);
         } else {
@@ -72,7 +72,7 @@ void addApplicant() {
         }
     }
 
-    strcpy(a[n].department, "NA");
+    strcpy(a[n].department, "N/A");
     a[n].allocated = 0;
 
     saveApplicants(a, n + 1);
@@ -108,22 +108,22 @@ void editApplicant() {
     getchar();
 
     printf("New Category (current: %s): ", a[found].category);
-    scanf("%s", a[found].category);
+    scanf(" %s", a[found].category);
     getchar();
 
     printf("New JEE Rank (current: %d): ", a[found].jee_rank);
     scanf("%d", &a[found].jee_rank);
-    getchar();
+    clearInputBuffer();
 
     printf("New HS Marks (current: %d): ", a[found].marks);
     scanf("%d", &a[found].marks);
-    getchar();
+    clearInputBuffer();
 
     printf("Update Preferences:\n");
     for (int i = 0; i < PREF_COUNT; i++) {
         printf("Preference %d (current: %s): ", i + 1, a[found].pref[i]);
         scanf("%s", a[found].pref[i]);
-        getchar();
+        clearInputBuffer();
     }
 
     strcpy(a[found].department, "NA");
